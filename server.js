@@ -12,6 +12,8 @@ const PORT = process.env.PORT_BACKEND || 4000;
 const allowedOrigins = [
   "http://localhost:4000",
   "https://whatsapp-chat-analyzer-tl96.onrender.com",
+  "https://whatsapp-chat-analyzer-nine.vercel.app", // Add this origin
+
 ];
 
 app.use(
