@@ -143,7 +143,7 @@ const ZipFileLoader = () => {
       
 
       <TextField
-          label="Prompt (Optional) (Left it blank to write summary of chat)"
+          label="Prompt (Optional) (Left it blank to write summary of the chat)"
           multiline
           rows={8}
           placeholder='Write a prompt of what you want to do with chat data (If left blank it will write summary of the chat)'

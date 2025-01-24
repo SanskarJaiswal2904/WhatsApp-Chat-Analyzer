@@ -3,6 +3,7 @@ import React from "react";
 import { ThemeContextProvider } from "./context/ThemeContext"; // Import context
 import Navbar from "./components/Navbar";
 import ZipFileLoader from "./components/ZipFileLoader";
+import Footer from "./components/Footer";
 
 function AppContent() {
 
@@ -10,7 +11,7 @@ function AppContent() {
     <div>
       <Navbar />
       <ZipFileLoader />
-      <h1>Footer!</h1>
+      <Footer/>
     </div>
   );
 }
