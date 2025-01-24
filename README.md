@@ -2,7 +2,7 @@
 This app analyzes exported WhatsApp chat data to generate meaningful insights or summaries. Users can upload their chat files in `.zip` format, provide an optional analysis prompt, and receive detailed results in an intuitive interface. The backend processes the chats by decompressing, chunking, and leveraging AI to extract key information. It's perfect for understanding trends, conversations, or generating summaries effortlessly, making it a valuable tool for personal or business use. 
 
 ## Live Link
-[Live Link]().
+[Live Link](https://whatsapp-chat-analyzer-nine.vercel.app/).
 
 ## Backend Service with Chunk-based File Processing
 
@@ -193,4 +193,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 Special thanks to the creators of the libraries used in this project.
 
 ## Author
-[Sanskar Jaiswal](https://sanskarjaiswal2904.github.io/Sanskar-Website/).
+Made by [Sanskar](https://sanskarjaiswal2904.github.io/Sanskar-Website/) with ❤️.
