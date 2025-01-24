@@ -9,7 +9,23 @@ const { generateContent } = require('./helpers/apiHelper');
 const app = express();
 const PORT = process.env.PORT_BACKEND || 4000;
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:4000",
+  "https://whatsapp-chat-analyzer-tl96.onrender.com",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Check if the origin is in the allowed origins or if it's undefined (e.g., for tools like Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 app.use(express.json());
 
 app.get('/', (req, res) => {
