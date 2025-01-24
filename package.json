@@ -14,11 +14,15 @@
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jspdf": "^2.5.2",
     "jszip": "^3.10.1",
+    "markdown-it": "^14.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.3",
     "react-scripts": "5.0.1",
-    "styled-components": "^6.1.14"
+    "styled-components": "^6.1.14",
+    "uuid": "^11.0.5"
   },
   "scripts": {
     "start": "react-scripts start",

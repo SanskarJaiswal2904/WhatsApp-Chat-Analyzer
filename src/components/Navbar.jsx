@@ -76,7 +76,7 @@ function ResponsiveAppBar() {
 
           {/* GitHub Icon */}
           <Tooltip title="GitHub">
-            <IconButton sx={{ p: 0, mr: 2 }} onClick={() => window.open("#", "_blank")}>
+            <IconButton sx={{ p: 0, mr: 2 }} onClick={() => window.open("https://github.com/SanskarJaiswal2904/WhatsApp-Chat-Analyzer", "_blank")}>
               <GitHubIcon sx={{ fontSize: 40, color: (theme) => theme.palette.mode === 'dark' ? 'grey' : 'black'}} />
             </IconButton>
           </Tooltip>

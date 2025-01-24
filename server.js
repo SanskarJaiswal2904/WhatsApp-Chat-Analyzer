@@ -40,7 +40,6 @@ app.use(express.raw({ limit: '10mb', type: 'application/gzip' }));
 app.post('/api/v1/upload', async (req, res) => {
   const prompt = req.query.prompt.trim(); // Extract prompt from query
   console.log("In backend");
-  console.log("Prompt:", prompt);
 
   try {
     console.log("Decompressing the file...");
@@ -62,7 +61,9 @@ app.post('/api/v1/upload', async (req, res) => {
     // Process each chunk sequentially
     for (const chunk of chunks) {
       console.log("Processing chunk...");
-      console.log("Prompt:", prompt);
+      if(prompt.length !== 0){
+        console.log("Prompt:", prompt);
+      }
       const result = await retryWithBackoff(() => generateContent(chunk, prompt, apiKey));
 
       // Append results
@@ -74,10 +75,11 @@ app.post('/api/v1/upload', async (req, res) => {
     }
 
     console.log("Success");
+    const length = allParts.length;
 
     res.status(200).json({
       message: 'Content processed',
-      chunkSize,
+      length,
       numberOfChunks,
       parts: allParts,
       modelVersion,
