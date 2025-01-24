@@ -32,7 +32,7 @@ function ResponsiveAppBar() {
             src="/WCALogoSVG.svg" 
             alt="App Logo"
             onClick={() => window.location.reload()}
-            title='Whatsapp Chat Analyzer.'
+            title='WhatsApp Chat Analyzer.'
             sx={{
               height: { xs: 40, md: 50 },
               width: { xs: 40, md: 50 },
@@ -45,7 +45,7 @@ function ResponsiveAppBar() {
             noWrap
             component="a"
             onClick={() => window.location.reload()}
-            title='Whatsapp Chat Analyzer.'
+            title='WhatsApp Chat Analyzer.'
             sx={{
               mr: 2,
               fontFamily: 'monospace',
@@ -57,10 +57,10 @@ function ResponsiveAppBar() {
             }}
           >
               <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-                Whatsapp Chat Analyzer
+                WhatsApp Chat Analyzer
               </Box>
               <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-                Whatsapp Chat Analyzer
+                WhatsApp Chat Analyzer
               </Box>
             </Typography>
 

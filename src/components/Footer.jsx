@@ -17,10 +17,10 @@ const Footer = () => {
     >
       <Container maxWidth="md">
         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-        © {new Date().getFullYear()}  Whatsapp Chat Analyzer by SansKar Jaiswal
+        © {new Date().getFullYear()}  WhatsApp Chat Analyzer by SansKar Jaiswal
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-        © {new Date().getFullYear()}  Whatsapp Chat Analyzer. All rights reserved.
+        © {new Date().getFullYear()}  WhatsApp Chat Analyzer. All rights reserved.
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
         🤝 Feel free to fork this repository and make your own changes.

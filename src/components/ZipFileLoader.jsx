@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Button, Typography, TextField, Box } from "@mui/material";
+import { Button, Typography, TextField, Box, List, ListItem } from "@mui/material";
 import JSZip from "jszip";
 import pako from "pako";
 import axios from 'axios';
+import IndiaGlobal from './IndiaGlobal';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 
 
@@ -17,6 +20,8 @@ const ZipFileLoader = () => {
   const [modelVersionF, setModelVersionF] = useState("");
   const [chunkSize, setChunkSize] = useState("");
   const [numberOfChunks, setNumberOfChunks] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [analyzingState, setAnalyzingState] = useState("Analyze");
 
 
   const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api/v1";
@@ -41,6 +46,10 @@ const ZipFileLoader = () => {
     setChunkSize("");
     setNumberOfChunks("");
     totalSize = 0;
+    setIsLoading(false);
+    setAnalyzingState("Analyze");
+
+
 
     if (file && file.name.endsWith(".zip")) {
       try {
@@ -89,8 +98,11 @@ const ZipFileLoader = () => {
 
   const sendToServer = async (compressedContent, prompt) => {
     try {
+      setIsLoading(true);
+      if(prompt !== ""){
         console.log("Sending prompt:", prompt);
-        console.log("Compressing the file..");
+      }
+      setAnalyzingState("Compressing the file..");
 
         const response = await axios.post(`${API_URL}/upload?prompt=${encodeURIComponent(prompt)}`, compressedContent, {
             headers: {
@@ -99,7 +111,7 @@ const ZipFileLoader = () => {
         });
 
         if (response.status === 200) {
-            console.log("File uploaded successfully!");
+            setAnalyzingState("File uploaded successfully!");
             // Extract data from the server response
             const { parts, modelVersion, chunkSize, numberOfChunks } = response.data;
             setResult(parts);
@@ -108,15 +120,19 @@ const ZipFileLoader = () => {
             setNumberOfChunks(numberOfChunks);
 
             totalSize = numberOfChunks * chunkSize;
+            setIsLoading(false);
 
             console.log("Processed Content:", parts);
             console.log("Model Version:", modelVersion);
+            setAnalyzingState("Analyze");
 
         } else {
             console.error("Failed to upload file.");
+            setIsLoading(false);
         }
     } catch (error) {
         console.error("Error sending data to the server:", error);
+        setIsLoading(false);
     }
 };
 
@@ -126,10 +142,30 @@ const ZipFileLoader = () => {
             ? "#03132fe8"
             : theme.palette.grey[100],
         color: (theme) => theme.palette.text.primary, padding: "20px", textAlign: "start"}}>
+          <Box>
+            <Box>
+              <IndiaGlobal/>
+            </Box>
+            <Typography variant='h5' fontWeight={'bold'}>  
+              Dive into your WhatsApp chat and unlock meaningful insights effortlessly.  
+            </Typography>
+            <Typography variant="body4" sx={{ my: 2 }} gutterBottom>
+                <List>
+                  <ListItem sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    • Export your WhatsApp chat using the
+                    ⋮ icon.
+                  </ListItem>
+                  <ListItem> • Upload the exported .zip file here.</ListItem>
+                  <ListItem> • Enter the type of analysis you'd like to perform, or leave it blank to generate a summary.</ListItem>
+                </List>
+              </Typography>
+          </Box>
+
+
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start', flexDirection: 'column' }}>
-        <Typography variant="h5" gutterBottom>
-          Upload and Read Zip File (Export the chat in whatsapp. The zip file you will get, upload that here to see magic.)
-        </Typography>
+      <Typography variant="body1" sx={{ mb: 1, mt: 3, fontWeight: 'bold' }}>
+        Upload your WhatsApp Exported .zip File
+      </Typography>
         <TextField
           type="file"
           inputProps={{ accept: ".zip" }}
@@ -137,13 +173,13 @@ const ZipFileLoader = () => {
           variant="outlined"
           style={{ marginBottom: "20px" }}
         />
-        <Button variant="contained" color="error" onClick={() => { setFileContent(""); setFileSize(""); setCompressedSize(""); setError(""); }}>
+        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => { setFileContent(""); setFileSize(""); setCompressedSize(""); setError(""); window.location.reload() }}>
           Remove File
         </Button>
       
 
       <TextField
-          label="Prompt (Optional) (Left it blank to write summary of the chat)"
+          label="Prompt (Optional) (Leave it blank to write summary of the chat)"
           multiline
           rows={8}
           placeholder='Write a prompt of what you want to do with chat data (If left blank it will write summary of the chat)'
@@ -163,6 +199,10 @@ const ZipFileLoader = () => {
           <Button
             variant="contained"
             color="primary"
+            size="small"
+            loading={isLoading}
+            loadingPosition="start"
+            startIcon={<i class="fa-solid fa-brain"></i>}
             onClick={async () => {
               if (!compressedContent) {
                 setError("No file available to analyze.");
@@ -171,7 +211,7 @@ const ZipFileLoader = () => {
               await sendToServer(compressedContent, prompt);
             }}
           >
-            Analyze
+            {analyzingState}
           </Button>
           <Button variant="text" color="success" sx={{marginRight: {xs : '5px',sm : '25px', md:'50px', lg :'150px', xl : '170px',}}} onClick={() => {setPrompt('')}}>
             Clear
@@ -194,33 +234,33 @@ const ZipFileLoader = () => {
             <Typography variant="body2" gutterBottom>
               <strong>Compressed Size:</strong> {compressedSize}
             </Typography>
-      {/* Render Model Version */}
-      <Typography variant="body2" gutterBottom>
-        <strong>Model Version:</strong> {modelVersionF}
-      </Typography>
-      <Typography variant="body2" gutterBottom>
-        <strong>Chunk Characters:</strong> {chunkSize}
-      </Typography>
-      <Typography variant="body2" gutterBottom>
-        <strong>Number of Chunks:</strong> {numberOfChunks}
-      </Typography>
+            {/* Render Model Version */}
+            <Typography variant="body2" gutterBottom>
+              <strong>Model Version:</strong> {modelVersionF}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              <strong>Chunk Characters:</strong> {chunkSize}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              <strong>Number of Chunks:</strong> {numberOfChunks}
+            </Typography>
 
-      <Typography variant="body2" gutterBottom>
-        <strong>Chunk Size:</strong> {totalSize}
-      </Typography>
+            <Typography variant="body2" gutterBottom>
+              <strong>Chunk Size:</strong> {totalSize}
+            </Typography>
 
-      {/* Render Results */}
-      {Array.isArray(result) && result.map((part, index) => (
-        <Typography key={index} variant="body2" gutterBottom>
-          <strong>Result {index + 1}:</strong> {part.text}
-        </Typography>
-    ))}
-            <pre>{fileContent}</pre>
-          </Typography>
+            {/* Render Results */}
+            {Array.isArray(result) && result.map((part, index) => (
+              <Typography key={index} variant="body2" gutterBottom>
+                <strong>Result {index + 1}:</strong> {part.text}
+              </Typography>
+            ))}
+                  <pre>{fileContent}</pre>
+                </Typography>
         </>
       )}
     </Box>
-    </Box>
+  </Box>
   );
 };
 
