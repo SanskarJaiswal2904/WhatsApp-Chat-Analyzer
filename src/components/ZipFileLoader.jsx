@@ -15,9 +15,12 @@ const ZipFileLoader = () => {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState([]);
   const [modelVersionF, setModelVersionF] = useState("");
+  const [chunkSize, setChunkSize] = useState("");
+  const [numberOfChunks, setNumberOfChunks] = useState("");
 
 
   const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api/v1";
+  let totalSize = 0;
 
   const formatBytes = (bytes) => {
     if (bytes === 0) return "0 Bytes";
@@ -31,7 +34,13 @@ const ZipFileLoader = () => {
     setError(""); // Reset error message
     setFileContent("");
     setFileSize("");
+    setCompressedContent(null);
+    setResult([]);
+    setModelVersionF("");
     setCompressedSize("");
+    setChunkSize("");
+    setNumberOfChunks("");
+    totalSize = 0;
 
     if (file && file.name.endsWith(".zip")) {
       try {
@@ -92,9 +101,13 @@ const ZipFileLoader = () => {
         if (response.status === 200) {
             console.log("File uploaded successfully!");
             // Extract data from the server response
-            const { parts, modelVersion } = response.data;
+            const { parts, modelVersion, chunkSize, numberOfChunks } = response.data;
             setResult(parts);
             setModelVersionF(modelVersion);
+            setChunkSize(chunkSize);
+            setNumberOfChunks(numberOfChunks);
+
+            totalSize = numberOfChunks * chunkSize;
 
             console.log("Processed Content:", parts);
             console.log("Model Version:", modelVersion);
@@ -108,7 +121,11 @@ const ZipFileLoader = () => {
 };
 
   return (
-    <div style={{ padding: "20px", textAlign: "start" }}>
+    <Box sx={{backgroundColor: (theme) =>
+          theme.palette.mode === "dark"
+            ? "#03132fe8"
+            : theme.palette.grey[100],
+        color: (theme) => theme.palette.text.primary, padding: "20px", textAlign: "start"}}>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start', flexDirection: 'column' }}>
         <Typography variant="h5" gutterBottom>
           Upload and Read Zip File (Export the chat in whatsapp. The zip file you will get, upload that here to see magic.)
@@ -181,19 +198,29 @@ const ZipFileLoader = () => {
       <Typography variant="body2" gutterBottom>
         <strong>Model Version:</strong> {modelVersionF}
       </Typography>
+      <Typography variant="body2" gutterBottom>
+        <strong>Chunk Characters:</strong> {chunkSize}
+      </Typography>
+      <Typography variant="body2" gutterBottom>
+        <strong>Number of Chunks:</strong> {numberOfChunks}
+      </Typography>
+
+      <Typography variant="body2" gutterBottom>
+        <strong>Chunk Size:</strong> {totalSize}
+      </Typography>
 
       {/* Render Results */}
       {Array.isArray(result) && result.map((part, index) => (
-  <Typography key={index} variant="body2" gutterBottom>
-    <strong>Result {index + 1}:</strong> {part.text}
-  </Typography>
-))}
+        <Typography key={index} variant="body2" gutterBottom>
+          <strong>Result {index + 1}:</strong> {part.text}
+        </Typography>
+    ))}
             <pre>{fileContent}</pre>
           </Typography>
         </>
       )}
     </Box>
-    </div>
+    </Box>
   );
 };
 

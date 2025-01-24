@@ -1,15 +1,25 @@
-// src/Hello.js
-import React from 'react';
-import ZipFileLoader from './components/ZipFileLoader.jsx';
+// src/App.js
+import React from "react";
+import { ThemeContextProvider } from "./context/ThemeContext"; // Import context
+import Navbar from "./components/Navbar";
+import ZipFileLoader from "./components/ZipFileLoader";
 
+function AppContent() {
+
+  return (
+    <div>
+      <Navbar />
+      <ZipFileLoader />
+      <h1>Footer!</h1>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      <ZipFileLoader />
-      <h1>Hello, World!</h1>
-    </div>
+    <ThemeContextProvider>
+      <AppContent />
+    </ThemeContextProvider>
   );
 }
 

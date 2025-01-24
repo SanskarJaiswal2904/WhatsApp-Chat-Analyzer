@@ -40,35 +40,76 @@ app.use(express.raw({ limit: '10mb', type: 'application/gzip' }));
 app.post('/api/v1/upload', async (req, res) => {
   const prompt = req.query.prompt.trim(); // Extract prompt from query
   console.log("In backend");
-  // console.log("Prompt:", prompt);
-
+  console.log("Prompt:", prompt);
 
   try {
-      console.log("Decompressing the file..");
-      const decompressedContent = zlib.gunzipSync(req.body).toString('utf-8');
+    console.log("Decompressing the file...");
+    const decompressedContent = zlib.gunzipSync(req.body).toString('utf-8');
 
-      // console.log("Decompressed Content:", decompressedContent);
+    // Split the content into chunks
+    const chunkSize = 800000; // Adjust chunk size as needed
+    const chunks = splitIntoChunks(decompressedContent, chunkSize);
+    const numberOfChunks = chunks.length;
 
-      const apiKey = process.env.API_KEY_GEMINI;
-      console.log("Analyzing File...");
+    console.log(`Split data into ${numberOfChunks} chunks.`);
 
-      const result = await retryWithBackoff(() => generateContent(decompressedContent, prompt, apiKey));
+    const apiKey = process.env.API_KEY_GEMINI;
+    console.log("Analyzing File...");
 
+    let allParts = []; // To collect all the parts from the API responses
+    let modelVersion = 'Unknown';
+
+    // Process each chunk sequentially
+    for (const chunk of chunks) {
+      console.log("Processing chunk...");
+      console.log("Prompt:", prompt);
+      const result = await retryWithBackoff(() => generateContent(chunk, prompt, apiKey));
+
+      // Append results
       const parts = result?.candidates?.[0]?.content?.parts || [];
-      const modelVersion = result?.modelVersion || 'Unknown';
+      allParts = [...allParts, ...parts];
 
-      console.log("Success");
+      // Capture model version (if available)
+      modelVersion = result?.modelVersion || modelVersion;
+    }
 
+    console.log("Success");
 
-      res.status(200).json({
-          message: 'Content processed',
-          parts,
-          modelVersion,
-      });
+    res.status(200).json({
+      message: 'Content processed',
+      chunkSize,
+      numberOfChunks,
+      parts: allParts,
+      modelVersion,
+    });
   } catch (error) {
-      res.status(500).json({ error: 'Failed to process content', details: error.message });
+    res.status(500).json({ error: 'Failed to process content', details: error.message });
   }
 });
+
+// Helper function to split into chunks
+const splitIntoChunks = (text, chunkSize) => {
+  const paragraphs = text.split(/\n+/); // Split the content into paragraphs using newline(s)
+  const chunks = [];
+  let currentChunk = "";
+
+  paragraphs.forEach((paragraph) => {
+    if ((currentChunk + paragraph).length <= chunkSize) {
+      currentChunk += paragraph + "\n"; // Add paragraph and a newline
+    } else {
+      chunks.push(currentChunk.trim());
+      currentChunk = paragraph + "\n";
+    }
+  });
+
+  if (currentChunk.trim()) {
+    chunks.push(currentChunk.trim());
+  }
+
+  return chunks;
+};
+
+
 
 
 async function retryWithBackoff(fn, retries = 3, delay = 1000) {

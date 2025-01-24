@@ -8,9 +8,9 @@ const generateContent = async (decompressedContent, customPrompt, apiKey) => {
   let prompt = 'Summarise the chat';
 
   if(customPrompt === ''){
-    prompt = `Write a summary of below text and give summary for each month between all sender and receiver ignore null message, encryption message and the message that does not provide complete information that is media and all. It,s for formal app, so write text formally`;
+    prompt = "Write a summary of below text, its either whatsapp chat between two people or a group chat. Also specify the date (approx) you are summarising for between all sender and receiver ignore null message, encryption message and the message that does not provide complete information that is media and all. It can contain hindi language also so analyze it and send in easy to understand format.";
   } else{
-    prompt = customPrompt;
+    prompt = customPrompt + " based on chat. just do this much and dont summarise, dont summarise, dont summarise strictly no summarise.";
   }
 
 
