@@ -131,7 +131,7 @@ const ZipFileLoader = () => {
   
           setTimeout(() => {
               if (shouldUpdateAnalyzingState)
-                  setAnalyzingState("Processing... Larger chat sizes may take more time to process.");
+                  setAnalyzingState("Processing... (Larger chat sizes may take more time to process.)");
           }, 12000);
   
           // Make the API call
@@ -251,7 +251,8 @@ const ZipFileLoader = () => {
                     • Export your WhatsApp chat using the
                     ⋮ icon.
                   </ListItem>
-                  <ListItem> • Upload the exported .zip file here.</ListItem>
+                  <ListItem> • <strong style={{marginLeft: '5px', marginRight: '7px'}}>Steps &gt;&gt;</strong>  ⋮ -&gt; More -&gt; Export chat -&gt; Without media</ListItem>
+                  <ListItem> • Upload/ Drag & drop the exported .zip file here.</ListItem>
                   <ListItem> • Enter the type of analysis you'd like to perform, or leave it blank to generate a summary.</ListItem>
                 </List>
               </Typography>
