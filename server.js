@@ -56,16 +56,40 @@ app.use(express.raw({ limit: '10mb', type: 'application/gzip' }));
 
 
 
-app.post('/api/v1/upload', async (req, res) => {
+app.post('/api/v1/upload/:precision', async (req, res) => {
+  const {precision} = req.params;
   const prompt = req.query.prompt.trim(); // Extract prompt from query
   console.log("In backend");
 
   try {
+    // Ensure length parameter is valid
+    const validPrecision = ['panoramic', 'concise', 'crisp', 'pinpoint'];
+    if (!validPrecision.includes(precision)) {
+      return res.status(400).json({ error: "Invalid precision parameter. Choose from 'panoramic', 'concise', 'crisp' or 'pinpoint'." });
+    }
+
     console.log("Decompressing the file...");
     const decompressedContent = zlib.gunzipSync(req.body).toString('utf-8');
 
-    // Split the content into chunks
-    const chunkSize = 800000; // Adjust chunk size as needed
+// Set chunk size based on precision value
+    let chunkSize;
+    switch (precision) {
+      case "panoramic":
+        chunkSize = 800000;
+        break;
+      case "concise":
+        chunkSize = 400000;
+        break;
+      case "crisp":
+        chunkSize = 120000;
+        break;
+      case "pinpoint":
+        chunkSize = 70000;
+        break;
+      default:
+        chunkSize = 800000; // Default to "panoramic" if not set
+    }
+
     const chunks = splitIntoChunks(decompressedContent, chunkSize);
     const numberOfChunks = chunks.length;
 

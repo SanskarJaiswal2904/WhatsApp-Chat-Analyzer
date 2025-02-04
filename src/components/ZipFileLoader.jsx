@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Typography, TextField, Box, List, ListItem, Paper, Divider, Accordion, AccordionSummary, AccordionDetails, Tooltip, } from "@mui/material";
+import { Button, Typography, TextField, Box, List, ListItem, Paper, Divider, Accordion, AccordionSummary, AccordionDetails, Tooltip, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
 import JSZip from "jszip";
 import pako from "pako";
 import axios from 'axios';
@@ -30,6 +30,8 @@ const ZipFileLoader = () => {
   const [numberOfChunks, setNumberOfChunks] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [analyzingState, setAnalyzingState] = useState("Analyze");
+  const [precisionValue, setPrecisionValue] = useState("panoramic");
+
 
 
   const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api/v1";
@@ -135,7 +137,7 @@ const ZipFileLoader = () => {
           }, 12000);
   
           // Make the API call
-          const response = await axios.post(`${API_URL}/upload?prompt=${encodeURIComponent(prompt)}`, compressedContent, {
+          const response = await axios.post(`${API_URL}/upload/${precisionValue}?prompt=${encodeURIComponent(prompt)}`, compressedContent, {
               headers: {
                   "Content-Type": "application/gzip",
               },
@@ -229,6 +231,11 @@ const ZipFileLoader = () => {
     // Call downloadPDFUUID with the combined string and file name prefix
     downloadPDFUUID(ans, "promptfile");
   };
+
+
+  const handlePrecision = (event) => {
+    setPrecisionValue(event.target.value);
+  };
   
   
 
@@ -277,6 +284,19 @@ const ZipFileLoader = () => {
             Remove File
           </Button>
         </Tooltip>
+
+        <Tooltip title="Processing Precision">
+          <FormControl sx={{ minWidth: 200, mt: 3, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+            <InputLabel>Processing Precision</InputLabel>
+              <Select value={precisionValue} onChange={handlePrecision} label="Processing Precision">
+                <MenuItem value="panoramic">Panoramic (Fast, Less Detail)</MenuItem>
+                <MenuItem value="concise">Concise (Balanced)</MenuItem>
+                <MenuItem value="crisp">Crisp (Slower, More Detail)</MenuItem>
+                <MenuItem value="pinpoint">Pinpoint (Slowest, Most Detail)</MenuItem>
+              </Select>
+        </FormControl>
+        </Tooltip>
+
       
 
         <Tooltip title="Write a prompt">
