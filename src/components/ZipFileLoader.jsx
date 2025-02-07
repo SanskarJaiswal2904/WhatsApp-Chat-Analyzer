@@ -285,7 +285,7 @@ const ZipFileLoader = () => {
           </Button>
         </Tooltip>
 
-        <Tooltip title="Processing Precision">
+        <Tooltip title="Processing Precision" placement="right">
           <FormControl sx={{ minWidth: 200, mt: 3, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
             <InputLabel>Processing Precision</InputLabel>
               <Select value={precisionValue} onChange={handlePrecision} label="Processing Precision">
